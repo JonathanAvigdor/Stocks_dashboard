@@ -1,0 +1,13 @@
+[theme]
+# Color system
+primaryColor = "#4F46E5"        # Indigo-600 (buttons/accents)
+backgroundColor = "#0B1020"     # Deep navy background
+secondaryBackgroundColor = "#121833"  # Cards/containers
+textColor = "#E5E7EB"           # Gray-200 text
+
+# Font family (built-in choices only: "sans serif", "serif", "monospace")
+font = "sans serif"
+
+# (Optional) Wide mode default
+# [server]
+# headless = true
