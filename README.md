@@ -59,7 +59,7 @@ Main components of the repository:
    ```toml
    TWELVEDATA_API_KEY = "YOUR_TWELVEDATA_KEY"
 
-4. ## ⚠️ Never commit this file – it’s already in .gitignore.
+4. **⚠️ Never commit this file – it’s already in .gitignore.** 
 
 Run the app
 streamlit run app.py
