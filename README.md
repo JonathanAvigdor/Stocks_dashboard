@@ -16,6 +16,14 @@ Built with **Twelve Data** (stocks/ETFs) and **Frankfurter** (FX) APIs.
 
 ---
 
+## 🎥 Demo
+
+Click the image below to watch a short demo of the dashboard in action:
+
+[![Watch the demo](demo/screenshot.png)](https://youtu.be/YOUR_VIDEO_ID)
+
+---
+
 ## 🛠️ Tech Stack
 
 - [Streamlit](https://streamlit.io/) – fast interactive dashboards  
