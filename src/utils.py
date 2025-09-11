@@ -36,7 +36,7 @@ INDEXES = [
     "CAC40",  # French CAC 40
 
     # Sweden
-    "OMXS30",  # OMX Stockholm 30
+    "OMX",  # OMX Stockholm 30
     "OMXS100", # OMX Stockholm 100
 
     # Israel

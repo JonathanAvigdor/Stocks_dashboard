@@ -1,0 +1,54 @@
+# file: tools/td_sweden_symbols.py
+import requests
+import pandas as pd
+
+BASE = "https://api.twelvedata.com"
+
+def _get(url: str, params: dict) -> dict:
+    r = requests.get(url, params=params, timeout=30)
+    r.raise_for_status()
+    return r.json()
+
+def sweden_stocks(api_key: str) -> pd.DataFrame:
+    """
+    All equities listed in Sweden (country filter).
+    Returns DataFrame with columns: symbol, name, currency, exchange, country, type
+    """
+    data = _get(f"{BASE}/stocks", {"country": "Sweden", "apikey": api_key})
+    items = data if isinstance(data, list) else data.get("data", data)
+    df = pd.DataFrame(items)
+    # Safety: keep only common fields if extra keys appear
+    cols = [c for c in ["symbol", "name", "currency", "exchange", "country", "type"] if c in df.columns]
+    return df[cols].sort_values("symbol").reset_index(drop=True)
+
+def sweden_indices(api_key: str) -> pd.DataFrame:
+    """
+    All indices for Sweden (if available in your plan).
+    Returns DataFrame with columns like: symbol, name, exchange, country
+    """
+    data = _get(f"{BASE}/indices", {"country": "Sweden", "apikey": api_key})
+    items = data if isinstance(data, list) else data.get("data", data)
+    df = pd.DataFrame(items)
+    if df.empty:
+        return df
+    cols = [c for c in ["symbol", "name", "exchange", "country", "currency", "type"] if c in df.columns]
+    return df[cols].sort_values("symbol").reset_index(drop=True)
+
+def symbol_search(query: str, api_key: str) -> pd.DataFrame:
+    """
+    Quick search across all instruments (useful for finding exact OMX/OMXS30 tickers).
+    """
+    data = _get(f"{BASE}/symbol_search", {"symbol": query, "apikey": api_key})
+    items = data if isinstance(data, list) else data.get("data", data)
+    return pd.DataFrame(items)
+
+if __name__ == "__main__":
+    # Quick CLI test (replace with your key or read from env)
+    import os
+    key = os.getenv("TWELVEDATA_API_KEY", "")
+    print("Stocks in Sweden:")
+    print(sweden_stocks(key).head(20))
+    print("\nIndices in Sweden:")
+    print(sweden_indices(key).head(20))
+    print("\nSearch OMXS30:")
+    print(symbol_search("OMXS30", key).head(10))
