@@ -58,13 +58,14 @@ Stocks_dashboard/
 │   │   └── yahoo_map.py           # TD-style → Yahoo ticker normalizer (US/XSTO/XTAE/etc.)
 │   └── api/
 │       ├── frankfurter.py         # FX client (free)
-│       └── symbols.py             # (optional) global symbol search helpers
+│       └── symbols.py             # Global symbol search helpers (optional)
 ├── demo/
 │   └── screenshot.png
 ├── .streamlit/
-│   └── config.toml                # (optional) local config; do NOT commit secrets.toml
+│   └── config.toml                # (optional) UI config; DO NOT commit secrets.toml
 ├── requirements.txt
 └── README.md
+
 
 
 
@@ -78,7 +79,7 @@ Stocks_dashboard/
 2. **Install dependencies**  
    `pip install -r requirements.txt`  
 
-3. ## run
+3. **run**
    streamlit run app.py
    
 ## 🌍 Symbols & Examples
