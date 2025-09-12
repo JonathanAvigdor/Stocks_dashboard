@@ -44,20 +44,28 @@ Click the image below to watch a short demo of the dashboard in action:
 
 ---
 
-## 📂 Project layout (at a glance)
-Path	Purpose
-app.py	Main dashboard: KPIs, watchlist, FX, movers
-pages/	Additional Streamlit pages (multipage app)
-models/functions.py	get_price_series (yfinance), returns, simulator
-src/adapters/yahoo_map.py	Normalizes symbols (e.g., VOLV-B:XSTO → VOLV-B.ST)
-src/api/frankfurter.py	FX client (free Frankfurter API)
-src/api/symbols.py	(Optional) global symbol search helpers
-demo/screenshot.png	Screenshot for README/demo
-.streamlit/config.toml	(Optional) UI config (theme, etc.)
-.streamlit/secrets.toml	Local only — do not commit
-requirements.txt	Python dependencies
-README.md	Project docs
-
+## Stocks_dashboard (project root)
+├─ app.py,
+├─ pages,
+│  ├─ 1_Overview.py
+│  ├─ 2_Stock_Explorer.py
+│  ├─ 3_Risk_&_Volatility.py
+│  └─ 4_Portfolio_Simulator.py
+├─ models
+│  └─ functions.py
+├─ src
+│  ├─ adapters
+│  │  └─ yahoo_map.py
+│  └─ api
+│     ├─ frankfurter.py
+│     └─ symbols.py
+├─ demo
+│  └─ screenshot.png
+├─ .streamlit
+│  ├─ config.toml
+│  └─ secrets.toml   (do not commit)
+├─ requirements.txt
+└─ README.md
 
 ---
 ## ⚡ Quickstart
