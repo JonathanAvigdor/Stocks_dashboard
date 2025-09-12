@@ -45,28 +45,27 @@ Click the image below to watch a short demo of the dashboard in action:
 ---
 
 Stocks_dashboard/
-├── app.py                         # Main dashboard: KPIs, watchlist, FX, movers
+├── app.py                        # Main dashboard: KPIs, watchlist, FX, movers
 ├── pages/
-│   ├── 1_Overview.py              # One-page snapshot (yfinance)
-│   ├── 2_Stock_Explorer.py        # Quick single-symbol chart (yfinance)
-│   ├── 3_Risk_&_Volatility.py     # Rolling vol, drawdowns, correlation
-│   └── 4_Portfolio_Simulator.py   # Backtest + Monte Carlo forecast
+│   ├── 1_Overview.py             # One-page snapshot (yfinance)
+│   ├── 2_Stock_Explorer.py       # Quick single-symbol chart (yfinance)
+│   ├── 3_Risk_&_Volatility.py    # Rolling vol, drawdowns, correlation
+│   └── 4_Portfolio_Simulator.py  # Backtest + Monte Carlo forecast
 ├── models/
-│   └── functions.py               # get_price_series (yfinance), returns, simulator
+│   └── functions.py              # yfinance get_price_series, returns, simulator
 ├── src/
 │   ├── adapters/
-│   │   └── yahoo_map.py           # TD-style → Yahoo ticker normalizer (US/XSTO/XTAE/etc.)
+│   │   └── yahoo_map.py          # TD-style → Yahoo ticker normalizer (US/XSTO/XTAE/etc.)
 │   └── api/
-│       ├── frankfurter.py         # FX client (free)
-│       └── symbols.py             # Global symbol search helpers (optional)
+│       ├── frankfurter.py        # FX client (free)
+│       └── symbols.py            # (optional) global symbol search helpers
 ├── demo/
 │   └── screenshot.png
 ├── .streamlit/
-│   └── config.toml                # (optional) UI config; DO NOT commit secrets.toml
+│   ├── config.toml               # (optional) UI config
+│   └── secrets.toml              # local only — DO NOT commit
 ├── requirements.txt
 └── README.md
-
-
 
 
 ---
