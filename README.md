@@ -43,19 +43,6 @@ Click the image below to watch a short demo of the dashboard in action:
 - [Plotly Express](https://plotly.com/python/plotly-express/) – interactive charts  
 
 ---
-$ tree
-.
-├── dir1
-│   ├── file11.ext
-│   └── file12.ext
-├── dir2
-│   ├── file21.ext
-│   ├── file22.ext
-│   └── file23.ext
-├── dir3
-├── file_in_root.ext
-└── README.md
-
 3 directories, 7 files
 
 ## Stocks_dashboard (project root)
