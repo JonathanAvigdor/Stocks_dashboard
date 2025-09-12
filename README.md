@@ -45,46 +45,46 @@ Click the image below to watch a short demo of the dashboard in action:
 ---
 
 ## Stocks_dashboard (project root)
-├─ app.py
+- ─ app.py
 
-├─ pages
+- ─ pages
 
-│  ├─ 1_Overview.py
+-  ├─ 1_Overview.py
 
-│  ├─ 2_Stock_Explorer.py
+-  ├─ 2_Stock_Explorer.py
 
-│  ├─ 3_Risk_&_Volatility.py
+-  ├─ 3_Risk_&_Volatility.py
 
-│  └─ 4_Portfolio_Simulator.py
+-  └─ 4_Portfolio_Simulator.py
 
-├─ models
+- ─ models
 
-│  └─ functions.py
-├─ src
+-  └─ functions.py
+- ─ src
 
-│  ├─ adapters
+-  ├─ adapters
 
-│  │  └─ yahoo_map.py
+-  │  └─ yahoo_map.py
 
-│  └─ api
+-  └─ api
 
-│     ├─ frankfurter.py
+-     ├─ frankfurter.py
 
-│     └─ symbols.py
+-     └─ symbols.py
 
-├─ demo
+- ─ demo
 
-│  └─ screenshot.png
+-  └─ screenshot.png
 
-├─ .streamlit
+- ─ .streamlit
 
-│  ├─ config.toml
+-  ├─ config.toml
 
-│  └─ secrets.toml   (do not commit)
+-  └─ secrets.toml   (do not commit)
 
-├─ requirements.txt
+- ─ requirements.txt
 
-└─ README.md
+- ─ README.md
 
 ---
 ## ⚡ Quickstart
