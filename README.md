@@ -1,18 +1,28 @@
-# 📊 Stocks & FX Dashboard
+📊 Stocks & FX Dashboard — yfinance edition
 
-A multipage **Streamlit web app** that provides a fast snapshot of global markets.  
-Built with **Twelve Data** (stocks/ETFs) and **Frankfurter** (FX) APIs.
+A multipage Streamlit web app that gives a fast snapshot of global markets.
+Prices & fundamentals: yfinance (Yahoo Finance) • FX: Frankfurter API.
+No paid market-data key required. (Optional: Twelve Data only for smarter symbol search.)
+
+## 🔗 Live App
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://jonathanavigdor-stocks-dashboard-app-zzz14s.streamlit.app/Portfolio_Simulator)
+
+- **Direct link to Portfolio Simulator:**  
+  https://jonathanavigdor-stocks-dashboard-app-zzz14s.streamlit.app/Portfolio_Simulator
 
 ---
 
 ## 🚀 Features
 
-- **KPI Overview** – quick performance metrics for major indices, ETFs, and FX pairs  
-- **Watchlist** – customizable list of tickers with price history, 1D–3M lookbacks, and trend indicators  
-- **Sparklines & Top Movers** – mini-charts for your tickers and top gainers/losers in your watchlist  
-- **FX Snapshot** – latest exchange rates with 1-day % changes and historical sparklines  
-- **Risk & Volatility** – rolling volatility, drawdowns, and risk metrics  
-- **Monte Carlo Simulator** – estimate possible **future portfolio returns** using random simulations of price paths  
+- KPI Overview – quick % change vs last close for major ETFs/indices + headline FX
+- Global Watchlist – add US & non-US tickers; see last price and 1D/5D/21D/63D lookbacks
+- Sparklines & Top Movers – mini trend charts + top gainers/losers in your watchlist
+- FX Snapshot – latest rates + tiny historical sparkline (Frankfurter)
+- Risk & Volatility – rolling vol, drawdowns, and correlation heatmap
+- Portfolio Simulator – backtest with contributions & rebalancing + Monte Carlo future paths
+- Global Symbol Search – add equities/ETFs from US, Sweden (XSTO), Israel (XTAE), etc.
+- You can type either Yahoo or “SYMBOL:MIC” — the app normalizes/auto-maps.
 
 ---
 
@@ -34,70 +44,49 @@ Click the image below to watch a short demo of the dashboard in action:
 
 ---
 
-## 📂 Project Structure
-
-Main components of the repository:
-
-- **app.py** → Main entry page for Streamlit  
-- **pages/** → Multipage Streamlit pages  
-  - `1_Overview.py`  
-  - `2_FX_Dashboard.py`  
-  - `3_Risk_&_Volatility.py`  
-  - `4_Monte_Carlo_Simulator.py`  
-- **src/** → API clients & utilities  
-  - `api/twelve_data.py`  
-  - `api/frankfurter.py`  
-- **models/** → Reusable charts and models  
-- **requirements.txt** → Python dependencies  
-- **.streamlit/** → Local config & secrets.toml (ignored in Git)  
-- **README.md** → Project documentation  
+## Stocks_dashboard/
+├─ app.py                          # Main dashboard: KPIs, watchlist, FX, movers
+├─ pages/
+│  ├─ 1_Overview.py                # One-page mini snapshot (yfinance)
+│  ├─ 2_Stock_Explorer.py          # Quick single-symbol chart (yfinance)
+│  ├─ 3_Risk_&_Volatility.py       # Rolling vol, drawdowns, correlation
+│  └─ 4_Portfolio_Simulator.py     # Backtest + Monte Carlo forecast
+├─ models/
+│  └─ functions.py                 # get_price_series (yfinance), returns, simulator
+├─ src/
+│  ├─ adapters/
+│  │  └─ yahoo_map.py              # TD-style → Yahoo ticker normalizer (US/XSTO/XTAE/etc.)
+│  └─ api/
+│     ├─ frankfurter.py            # FX client (free)
+│     └─ symbols.py                # (Optional) global symbol search helpers
+├─ demo/
+│  └─ screenshot.png
+├─ requirements.txt
+└─ README.md
 
 ---
-
 ## ⚡ Quickstart
 
 1. **Clone the repo**  
-   `git clone https://github.com/JonathanAvigdor/Stocks_dashboard.git && cd Stocks_dashboard`  
+    git clone https://github.com/<your-username>/<your-repo>.git
+    cd <your-repo>
 
 2. **Install dependencies**  
    `pip install -r requirements.txt`  
 
-3. **Add your API keys**  
-   Create a local `.streamlit/secrets.toml`:  
-   ```toml
-   TWELVEDATA_API_KEY = "YOUR_TWELVEDATA_KEY"
+3. ## run
+   streamlit run app.py
+   
+## 🌍 Symbols & Examples
 
-4. **⚠️ Never commit this file – it’s already in .gitignore.** 
+The app auto-normalizes common formats to Yahoo tickers:
+- US: AAPL, MSFT, SPY
+- Sweden (XSTO): type VOLV-B:XSTO or Yahoo VOLV-B.ST
+- OMXS30 index: type OMXS30 (auto-mapped to ^OMXS30)
+- OMXS30 ETF: XACT.OMXS30 → XACT-OMXS30.ST (auto-mapped)
 
-Run the app
-streamlit run app.py
+If a symbol fails once, try the Yahoo form directly.
 
-## 🌐 Deployment
-
-The app is deployed on Streamlit Cloud.
-Every push to main redeploys automatically.
-
-To deploy yourself:
-
-1. Fork this repo
-
-2. Go to Streamlit Cloud
-
-3. Connect your GitHub repo → pick app.py as the main file
-
-4. Set TWELVEDATA_API_KEY in Settings → Secrets
-
-## 🔒 API Usage & Limits
-
-* Twelve Data free tier: ~800 credits/day, 8/minute
-
-* To avoid hitting limits:
-
-  * Use the Low API mode toggle in the sidebar
-
-  * Click Refresh manually instead of auto-refresh
-
-  * Extend caching TTLs
 
 ## 📈 Monte Carlo Simulator
 
