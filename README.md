@@ -45,8 +45,10 @@ Click the image below to watch a short demo of the dashboard in action:
 ---
 
 ## Stocks_dashboard (project root)
-├─ app.py,
-├─ pages,
+├─ app.py
+
+├─ pages
+
 │  ├─ 1_Overview.py
 │  ├─ 2_Stock_Explorer.py
 │  ├─ 3_Risk_&_Volatility.py
