@@ -45,7 +45,7 @@ Click the image below to watch a short demo of the dashboard in action:
 ---
 
 Stocks_dashboard/
-├── app.py                        # Main dashboard: KPIs, watchlist, FX, movers
+├── app.py                        
 ├── pages/
 │   ├── 1_Overview.py             # One-page snapshot (yfinance)
 │   ├── 2_Stock_Explorer.py       # Quick single-symbol chart (yfinance)
