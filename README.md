@@ -44,7 +44,7 @@ Click the image below to watch a short demo of the dashboard in action:
 
 ---
 
-## Stocks_dashboard/
+Stocks_dashboard/
 ├── app.py                         # Main dashboard: KPIs, watchlist, FX, movers
 ├── pages/
 │   ├── 1_Overview.py              # One-page snapshot (yfinance)
@@ -58,13 +58,14 @@ Click the image below to watch a short demo of the dashboard in action:
 │   │   └── yahoo_map.py           # TD-style → Yahoo ticker normalizer (US/XSTO/XTAE/etc.)
 │   └── api/
 │       ├── frankfurter.py         # FX client (free)
-│       └── symbols.py             # (Optional) global symbol search helpers
+│       └── symbols.py             # (optional) global symbol search helpers
 ├── demo/
 │   └── screenshot.png
 ├── .streamlit/
-│   └── config.toml                # optional; secrets.toml is NOT committed
+│   └── config.toml                # (optional) local config; do NOT commit secrets.toml
 ├── requirements.txt
 └── README.md
+
 
 
 ---
