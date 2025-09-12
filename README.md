@@ -47,23 +47,23 @@ Click the image below to watch a short demo of the dashboard in action:
 Stocks_dashboard/
 ├── app.py                        
 ├── pages/
-│   ├── 1_Overview.py             # One-page snapshot (yfinance)
-│   ├── 2_Stock_Explorer.py       # Quick single-symbol chart (yfinance)
-│   ├── 3_Risk_&_Volatility.py    # Rolling vol, drawdowns, correlation
-│   └── 4_Portfolio_Simulator.py  # Backtest + Monte Carlo forecast
+│   ├── 1_Overview.py             
+│   ├── 2_Stock_Explorer.py      
+│   ├── 3_Risk_&_Volatility.py    
+│   └── 4_Portfolio_Simulator.py  
 ├── models/
-│   └── functions.py              # yfinance get_price_series, returns, simulator
+│   └── functions.py             
 ├── src/
 │   ├── adapters/
-│   │   └── yahoo_map.py          # TD-style → Yahoo ticker normalizer (US/XSTO/XTAE/etc.)
+│   │   └── yahoo_map.py         
 │   └── api/
-│       ├── frankfurter.py        # FX client (free)
-│       └── symbols.py            # (optional) global symbol search helpers
+│       ├── frankfurter.py        
+│       └── symbols.py            
 ├── demo/
 │   └── screenshot.png
 ├── .streamlit/
-│   ├── config.toml               # (optional) UI config
-│   └── secrets.toml              # local only — DO NOT commit
+│   ├── config.toml             
+│   └── secrets.toml              
 ├── requirements.txt
 └── README.md
 
