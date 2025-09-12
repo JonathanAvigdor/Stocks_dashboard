@@ -2,23 +2,113 @@
 from __future__ import annotations
 import pandas as pd
 import numpy as np
+import datetime as dt
 from typing import Dict, Set
-from src.api.twelve_data import TwelveDataClient
+import yfinance as yf
+from src.adapters.yahoo_map import td_to_yahoo
+from src.adapters.yahoo_map import td_to_yahoo, yahoo_alternates
+
 
 
 # ---------- Data ----------
+# models/functions.py  (only this function needs replacing)
+
 def get_price_series(symbol: str, api_key: str, bars: int = 5000) -> pd.Series:
-    """Fetch daily close prices for one symbol as a pandas Series indexed by date."""
-    client = TwelveDataClient(api_key)
-    df = client.daily(symbol, interval="1day", outputsize=bars)
-    if df is None or df.empty:
-        return pd.Series(dtype="float64", name=symbol)
-    df = df[["time", "close"]].copy()
-    df["time"] = pd.to_datetime(df["time"])
-    df = df.set_index("time").sort_index()
-    s = df["close"].astype(float)
-    s.name = symbol
-    return s
+    """
+    yfinance fetch with resilient fallbacks:
+      1) map TD-style symbol -> Yahoo (td_to_yahoo)
+      2) try period chain (short to long) to dodge Yahoo quirks (e.g., ^OMXS30)
+      3) if still empty, try start-date download (10y back) via download()
+      4) if still empty, try Ticker.history(start=...)
+      5) if still empty, try alternates (yahoo_alternates)
+    Returns a pd.Series (Close) or empty Series.
+    """
+    def _series_from_df(df: pd.DataFrame, name: str) -> pd.Series:
+        if df is None or df.empty:
+            return pd.Series(dtype="float64")
+        # Prefer Adj Close if present; else Close
+        if "Adj Close" in df:
+            s = df["Adj Close"]
+        elif "Close" in df:
+            s = df["Close"]
+        else:
+            # maybe single-level Series already
+            return pd.Series(dtype="float64")
+        s = s.dropna()
+        if bars:
+            s = s.tail(bars)
+        s.index = pd.to_datetime(s.index)
+        s.name = name
+        return s.astype(float)
+
+    def _try_all_methods(yticker: str) -> pd.Series:
+        if not yticker:
+            return pd.Series(dtype="float64")
+
+        # 2) Period chain (shorter first)
+        period_chain = ["2y", "5y", "10y", "max"]
+        if yticker.startswith("^"):            # indexes often dislike 'max'
+            period_chain = ["10y", "5y", "2y", "max"]
+
+        for per in period_chain:
+            try:
+                df = yf.download(
+                    tickers=yticker,
+                    period=per,
+                    interval="1d",
+                    auto_adjust=True,
+                    progress=False,
+                    group_by="ticker",
+                    threads=True,
+                )
+            except Exception:
+                df = None
+            s = _series_from_df(df, symbol)
+            if not s.empty:
+                return s
+
+        # 3) Start-date download (10y back)
+        start = (dt.date.today() - dt.timedelta(days=365*10)).isoformat()
+        try:
+            df = yf.download(
+                tickers=yticker,
+                start=start,
+                interval="1d",
+                auto_adjust=True,
+                progress=False,
+                group_by="ticker",
+                threads=True,
+            )
+        except Exception:
+            df = None
+        s = _series_from_df(df, symbol)
+        if not s.empty:
+            return s
+
+        # 4) Ticker.history as last resort
+        try:
+            t = yf.Ticker(yticker)
+            dfh = t.history(start=start, interval="1d", auto_adjust=True)
+        except Exception:
+            dfh = None
+        s = _series_from_df(dfh, symbol)
+        return s
+
+    # 1) primary mapping
+    primary = td_to_yahoo(symbol)
+    s = _try_all_methods(primary)
+    if not s.empty:
+        return s
+
+    # 5) alternates
+    for alt in yahoo_alternates(symbol, primary):
+        s_alt = _try_all_methods(alt)
+        if not s_alt.empty:
+            return s_alt
+
+    return pd.Series(dtype="float64")
+
+
 
 
 def compute_returns(prices: pd.DataFrame, kind: str = "Simple") -> pd.DataFrame:

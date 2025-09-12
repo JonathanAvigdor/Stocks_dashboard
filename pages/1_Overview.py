@@ -1,60 +1,113 @@
+# pages/Overview.py — yfinance snapshot + Frankfurter FX
 import streamlit as st
 import pandas as pd
-from src.api.twelve_data import TwelveDataClient
+import yfinance as yf
+
 from src.api.frankfurter import FrankfurterClient
+from src.adapters.yahoo_map import td_to_yahoo  # TD-style -> Yahoo symbols (e.g., VOLV-B:XSTO -> VOLV-B.ST)
 
-
+# ---------------
+# Page setup
+# ---------------
 st.set_page_config(page_title="Stocks & FX Dashboard", layout="wide")
 st.title("📊 Stocks & FX Dashboard")
-
 st.subheader("Overview")
 
-# --- Keys ---
-td_key = st.secrets.get("TWELVEDATA_API_KEY", "")
-if not td_key or td_key == "YOUR_TWELVE_DATA_KEY":
-    st.error("Please set TWELVEDATA_API_KEY in .streamlit/secrets.toml")
+# Optional kill switch (same behavior as main app)
+if st.secrets.get("FETCH_ENABLED", "1") != "1":
+    st.warning("⏸️ Data fetching is disabled by server setting.")
     st.stop()
 
-td = TwelveDataClient(td_key)
 fx = FrankfurterClient()
 
+# ===============================
+# LEFT: Index / Stock Snapshot
+# ===============================
 col1, col2 = st.columns(2)
 
-# ---------- LEFT: STOCK / INDEX SNAPSHOT ----------
 with col1:
     st.subheader("Index / Stock Snapshot (Δ% vs previous close)")
-    # ETFs as index proxies + a couple of large caps
     default_tickers = ["SPY", "QQQ", "EFA", "EWD", "AAPL", "MSFT", "NVDA"]
     selected = st.multiselect("Tickers", default_tickers, default=default_tickers[:5])
 
-    @st.cache_data(ttl=120)
-    def pct_change_last_close(symbol: str, api_key: str) -> float | None:
-        # Get last 2 daily bars and compute % change
-        client = TwelveDataClient(api_key)
-        df = client.daily(symbol, interval="1day", outputsize=2)
-        if df is None or df.empty or len(df) < 2:
-            return None
-        last2 = df.tail(2)["close"].to_list()
-        prev, last = last2[0], last2[1]
-        if prev is None or prev == 0:
-            return None
-        return (last / prev - 1.0) * 100.0
+    @st.cache_data(ttl=120, show_spinner=False)
+    def pct_changes_batch(symbols: list[str]) -> pd.DataFrame:
+        """
+        One yfinance call for all tickers:
+        Returns DataFrame: columns=['symbol','change_%'] where change_% is vs previous close.
+        """
+        if not symbols:
+            return pd.DataFrame(columns=["symbol", "change_%"])
 
-    rows = []
-    for t in selected:
-        chg = pct_change_last_close(t, td_key)
-        rows.append({"symbol": t, "change_%": 0.0 if chg is None else round(chg, 2)})
+        # Map TD-style symbols to Yahoo tickers
+        mapping = {sym: td_to_yahoo(sym) for sym in symbols}
+        ysyms = list(mapping.values())
 
-    df_changes = pd.DataFrame(rows)
-    st.dataframe(df_changes, use_container_width=True)
+        df = yf.download(
+            tickers=ysyms,
+            period="7d",
+            interval="1d",
+            auto_adjust=True,
+            group_by="ticker",
+            threads=True,
+            progress=False,
+        )
+        rows = []
 
-# ---------- RIGHT: FX SNAPSHOT ----------
+        # Handle both shapes: MultiIndex (many tickers) or single-index (one ticker)
+        if isinstance(df.columns, pd.MultiIndex):
+            for td_sym, ysym in mapping.items():
+                try:
+                    s = df[ysym]["Adj Close"].dropna()
+                except Exception:
+                    try:
+                        s = df[ysym]["Close"].dropna()
+                    except Exception:
+                        s = pd.Series(dtype="float64")
+                if len(s) >= 2 and s.iloc[-2] != 0:
+                    chg = (float(s.iloc[-1]) / float(s.iloc[-2]) - 1.0) * 100.0
+                    rows.append({"symbol": td_sym, "change_%": round(chg, 2)})
+                else:
+                    rows.append({"symbol": td_sym, "change_%": None})
+        else:
+            # Single ticker shape
+            td_sym = symbols[0]
+            s = df.get("Adj Close")
+            if s is None:
+                s = df.get("Close")
+            s = (s or pd.Series(dtype="float64")).dropna()
+            if len(s) >= 2 and s.iloc[-2] != 0:
+                chg = (float(s.iloc[-1]) / float(s.iloc[-2]) - 1.0) * 100.0
+                rows.append({"symbol": td_sym, "change_%": round(chg, 2)})
+            else:
+                rows.append({"symbol": td_sym, "change_%": None})
+
+        # Preserve input order
+        out = pd.DataFrame(rows)
+        out["symbol"] = pd.Categorical(out["symbol"], categories=symbols, ordered=True)
+        return out.sort_values("symbol").reset_index(drop=True)
+
+    if selected:
+        df_changes = pct_changes_batch(selected)
+        st.dataframe(df_changes, use_container_width=True)
+    else:
+        st.info("Pick at least one ticker.")
+
+# =================
+# RIGHT: FX Snapshot
+# =================
 with col2:
     st.subheader("FX Snapshot")
     base = st.selectbox("Base", ["USD", "EUR", "SEK", "GBP"], index=2)   # default SEK
     quote = st.selectbox("Quote", ["USD", "EUR", "SEK", "GBP"], index=1)  # default EUR
+
     if base == quote:
         st.warning("Choose different currencies.")
     else:
         latest = fx.latest(base=base, symbols=quote)
-        st.metric(f"{base}/{quote}", latest["rates"][quote], help=f"Date: {latest['date']}")
+        try:
+            rate = latest["rates"][quote]
+            date = latest.get("date", "")
+            st.metric(f"{base}/{quote}", f"{rate:.4f}" if isinstance(rate, (int, float)) else rate, help=f"Date: {date}")
+        except Exception:
+            st.error("Could not load FX rate right now.")
