@@ -45,24 +45,27 @@ Click the image below to watch a short demo of the dashboard in action:
 ---
 
 ## Stocks_dashboard/
-├─ app.py                          # Main dashboard: KPIs, watchlist, FX, movers
-├─ pages/
-│  ├─ 1_Overview.py                # One-page mini snapshot (yfinance)
-│  ├─ 2_Stock_Explorer.py          # Quick single-symbol chart (yfinance)
-│  ├─ 3_Risk_&_Volatility.py       # Rolling vol, drawdowns, correlation
-│  └─ 4_Portfolio_Simulator.py     # Backtest + Monte Carlo forecast
-├─ models/
-│  └─ functions.py                 # get_price_series (yfinance), returns, simulator
-├─ src/
-│  ├─ adapters/
-│  │  └─ yahoo_map.py              # TD-style → Yahoo ticker normalizer (US/XSTO/XTAE/etc.)
-│  └─ api/
-│     ├─ frankfurter.py            # FX client (free)
-│     └─ symbols.py                # (Optional) global symbol search helpers
-├─ demo/
-│  └─ screenshot.png
-├─ requirements.txt
-└─ README.md
+├── app.py                         # Main dashboard: KPIs, watchlist, FX, movers
+├── pages/
+│   ├── 1_Overview.py              # One-page snapshot (yfinance)
+│   ├── 2_Stock_Explorer.py        # Quick single-symbol chart (yfinance)
+│   ├── 3_Risk_&_Volatility.py     # Rolling vol, drawdowns, correlation
+│   └── 4_Portfolio_Simulator.py   # Backtest + Monte Carlo forecast
+├── models/
+│   └── functions.py               # get_price_series (yfinance), returns, simulator
+├── src/
+│   ├── adapters/
+│   │   └── yahoo_map.py           # TD-style → Yahoo ticker normalizer (US/XSTO/XTAE/etc.)
+│   └── api/
+│       ├── frankfurter.py         # FX client (free)
+│       └── symbols.py             # (Optional) global symbol search helpers
+├── demo/
+│   └── screenshot.png
+├── .streamlit/
+│   └── config.toml                # optional; secrets.toml is NOT committed
+├── requirements.txt
+└── README.md
+
 
 ---
 ## ⚡ Quickstart
