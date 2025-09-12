@@ -1,4 +1,4 @@
-📊 Stocks & FX Dashboard — yfinance edition
+# 📊 Stocks & FX Dashboard — yfinance edition
 
 A multipage Streamlit web app that gives a fast snapshot of global markets.
 Prices & fundamentals: yfinance (Yahoo Finance) • FX: Frankfurter API.
